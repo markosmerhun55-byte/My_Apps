@@ -2,11 +2,6 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import pickle
-from pathlib import Path
-
-# Page config MUST be the very first Streamlit call executed
-st.set_page_config(page_title="House Price", layout="centered")
-
 # py -m streamlit run House_App.py
 # Class definition needed if Custom Perceptron won
 class LinearPerceptronRegressor:
@@ -23,9 +18,7 @@ class LinearPerceptronRegressor:
 # Load Pipeline Assets
 @st.cache_resource
 def load_assets():
-    BASE_DIR = Path(__file__).resolve().parent
-    model_path = BASE_DIR / "house_model.pkl"
-    with open(model_path, "rb") as f:
+    with open("house_model.pkl", "rb") as f:
         return pickle.load(f)
 
 pipeline = load_assets()
@@ -116,6 +109,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 # App Title & UI Header
 
+#st.set_page_config(page_title="House Price ", layout="centered")
 st.title(":rainbow[House Price Prediction Web App]")
 st.markdown(
     "<h1 style='text-align: center; color: #4CAF50;'>Input House Features</h1>", 
@@ -150,17 +144,17 @@ if st.button("Get Price"):
 
     # Validation check:
     if Room < 1:
-        st.error("⚠️ Validation Error: Number_of_Rooms must be greater than or equal to 1 ")
+    	st.error("⚠️ Validation Error: Number_of_Rooms must be greater than or equal to 1 ")
     elif site_area < 75: 
-        st.error("⚠️ Validation Error: Site Area  must be greater than 75 sqm.")
+    	st.error("⚠️ Validation Error: Site Area  must be greater than 75 sqm.")
     elif built_area < 75:
         st.error("⚠️ Validation Error: Built Area must be greater than 75 sqm.")
     elif CBD <=0:
-        st.error("⚠️ Validation Error: Proximity_to_CBD_km must be greater than 0 sqm. ")
+    	st.error("⚠️ Validation Error: Proximity_to_CBD_km must be greater than 0 sqm. ")
     elif bus_Dis <=0:
-        st.error("⚠️ Validation Error: Proximity_to_Bus_Station_km must be greater than 0 sqm  ")
+     	st.error("⚠️ Validation Error: Proximity_to_Bus_Station_km must be greater than 0 sqm  ")
     elif school_Dis <=0:
-        st.error("⚠️ Validation Error: Proximity_to_Schools_km must be greater than 0 sqm ")
+    	st.error("⚠️ Validation Error: Proximity_to_Schools_km must be greater than 0 sqm ")
     else:
         # Prepare inputs and proceed to prediction
         input_df = pd.DataFrame([user_inputs])
