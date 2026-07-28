@@ -5,10 +5,11 @@ from sklearn.model_selection import train_test_split
 from sklearn.svm import LinearSVC
 
 # ---------------------------------------------------------
-# Page Configuration
+# Page Configuration (Must be first Streamlit call)
 # ---------------------------------------------------------
-#Sst.set_page_config(
-    #page_title="SMS Spam Detector (Linear SVM)", page_icon="📩", layout="centered")
+st.set_page_config(
+    page_title="SMS Spam Detector (Linear SVM)", page_icon="📩", layout="centered"
+)
 
 
 # ---------------------------------------------------------
