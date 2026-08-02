@@ -61,7 +61,7 @@ st.divider()
 st.subheader("Enter a Message to Test:")
 
 user_input = st.text_area(
-    "Message Text:", height=120, placeholder="Type or paste SMS message here..."
+    "Message Text:", height=120, placeholder="Type or paste SMS message here...like Free,Kiyaaa etc..."
 )
 
 # Predict Button
