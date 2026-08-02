@@ -3,10 +3,8 @@ import pandas as pd
 import numpy as np
 import pickle
 from pathlib import Path
-#import pickle  # or
 import joblib 
-#if you're using joblib.load()
-# py -m streamlit run House_App.py
+
 # Class definition needed if Custom Perceptron won
 class LinearPerceptronRegressor:
     def __init__(self, learning_rate=0.001, epochs=100):
@@ -22,9 +20,14 @@ class LinearPerceptronRegressor:
 # Load Pipeline Assets
 @st.cache_resource
 def load_assets():
-    BASE_DIR = Path(__file__).resolve().parent.parent
+    # Detect current directory and fallback to parent directory if model isn't found locally
+    current_dir = Path(__file__).resolve().parent
+    model_path = current_dir / "house_model.pkl"
 
-    with open(BASE_DIR / "house_model.pkl", "rb") as f:
+    if not model_path.exists():
+        model_path = current_dir.parent / "house_model.pkl"
+
+    with open(model_path, "rb") as f:
         pipeline = pickle.load(f)
 
     return pipeline
@@ -36,7 +39,8 @@ scaler = pipeline["scaler"]
 enc_type = pipeline["enc_type"]
 cat_cols = pipeline["categorical_cols"]
 num_cols = pipeline["numerical_cols"]
-#CSS
+
+# CSS
 st.markdown("""
     <style>
 
@@ -96,10 +100,10 @@ st.markdown("""
 
     /* 5. Predict Button Styling */
     div.stButton > button {
-        width: 200%;
+        width: 100%;
         background-color: #2563eb;
         color: white;
-        font-size: 30px;
+        font-size: 20px;
         font-weight: bold;
         border-radius: 8px;
         padding: 10px 0;
@@ -115,15 +119,16 @@ st.markdown("""
 
     </style>
 """, unsafe_allow_html=True)
-# App Title & UI Header
 
-#st.set_page_config(page_title="House Price ", layout="centered")
+# App Title & UI Header
 st.title(":rainbow[House Price Prediction Web App]")
 st.markdown(
     "<h1 style='text-align: center; color: #4CAF50;'>Input House Features</h1>", 
     unsafe_allow_html=True
 )
+
 user_inputs = {}
+
 # Numeric inputs
 for col in num_cols:
     user_inputs[col] = st.number_input(f"Enter {col}", value=0.0, step=1.0)
@@ -145,24 +150,24 @@ for col in cat_cols:
 if st.button("Get Price"):
     site_area = user_inputs.get("Site_Area_sqm", 0)
     built_area = user_inputs.get("Built_Area_sqm", 0)
-    school_Dis= user_inputs.get("Proximity_to_Schools_km",0)
-    bus_Dis= user_inputs.get("Proximity_to_Bus_Station_km",0)
-    CBD= user_inputs.get("Proximity_to_CBD_km",0)
-    Room= user_inputs.get("Number_of_Rooms",0)
+    school_Dis = user_inputs.get("Proximity_to_Schools_km", 0)
+    bus_Dis = user_inputs.get("Proximity_to_Bus_Station_km", 0)
+    CBD = user_inputs.get("Proximity_to_CBD_km", 0)
+    Room = user_inputs.get("Number_of_Rooms", 0)
 
     # Validation check:
     if Room < 1:
-    	st.error("⚠️ Validation Error: Number_of_Rooms must be greater than or equal to 1 ")
+        st.error("⚠️ Validation Error: Number_of_Rooms must be greater than or equal to 1.")
     elif site_area < 75: 
-    	st.error("⚠️ Validation Error: Site Area  must be greater than 75 sqm.")
+        st.error("⚠️ Validation Error: Site Area must be greater than 75 sqm.")
     elif built_area < 75:
         st.error("⚠️ Validation Error: Built Area must be greater than 75 sqm.")
-    elif CBD <=0:
-    	st.error("⚠️ Validation Error: Proximity_to_CBD_km must be greater than 0 sqm. ")
-    elif bus_Dis <=0:
-     	st.error("⚠️ Validation Error: Proximity_to_Bus_Station_km must be greater than 0 sqm  ")
-    elif school_Dis <=0:
-    	st.error("⚠️ Validation Error: Proximity_to_Schools_km must be greater than 0 sqm ")
+    elif CBD <= 0:
+        st.error("⚠️ Validation Error: Proximity_to_CBD_km must be greater than 0 km.")
+    elif bus_Dis <= 0:
+        st.error("⚠️ Validation Error: Proximity_to_Bus_Station_km must be greater than 0 km.")
+    elif school_Dis <= 0:
+        st.error("⚠️ Validation Error: Proximity_to_Schools_km must be greater than 0 km.")
     else:
         # Prepare inputs and proceed to prediction
         input_df = pd.DataFrame([user_inputs])
@@ -182,7 +187,8 @@ if st.button("Get Price"):
         # Make Prediction
         prediction = model.predict(processed_data)
         price = max(0, prediction[0])
-        st.success(f"### House Price:{price} ETB")
-        # Footer
+        st.success(f"### House Price: {price:,.2f} ETB")
+
+# Footer
 st.divider()
 st.caption("Powered by Mera")
