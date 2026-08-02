@@ -22,8 +22,12 @@ class LinearPerceptronRegressor:
 # Load Pipeline Assets
 @st.cache_resource
 def load_assets():
-    with open("house_model.pkl", "rb") as f:
-        return pickle.load(f)
+    BASE_DIR = Path(__file__).resolve().parent.parent
+
+    with open(BASE_DIR / "house_model.pkl", "rb") as f:
+        pipeline = pickle.load(f)
+
+    return pipeline
 
 pipeline = load_assets()
 model = pipeline["model"]
