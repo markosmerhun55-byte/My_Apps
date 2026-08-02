@@ -1,12 +1,12 @@
 import streamlit as st
 
 st.set_page_config(
-    page_title="AI Prediction Dashboard",
+    page_title="Mera AI Prediction Dashboard",
     page_icon="🤖",
     layout="wide"
 )
 
-st.title("🤖 AI Prediction Dashboard")
+st.title("🤖 Mera AI Prediction Dashboard")
 
 st.markdown("""
 ## Welcome
