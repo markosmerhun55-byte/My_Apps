@@ -3,3 +3,5 @@ joblib
 pandas
 numpy
 scikit-learn
+opencv-python-headless
+tensorflow
