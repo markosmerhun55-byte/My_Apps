@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import streamlit as st
 import tensorflow as tf
-from streamlit_webrtc import VideoTransformerBase, webrtc_streamer
+from streamlit_webrtc import VideoProcessorBase, webrtc_streamer
 
 
 # 1. Cache and load trained model
@@ -18,8 +18,7 @@ model = load_digit_model()
 def preprocess_digit_image(img):
     """Preprocesses BGR image matching the training pipeline:
 
-    Grayscale -> Adaptive Threshold -> Morph Open -> Square Pad -> Resize
-    (32x32)
+    Grayscale -> Adaptive Threshold -> Morph Open -> Square Pad -> Resize (32x32)
     """
     if len(img.shape) == 3:
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -68,10 +67,11 @@ def preprocess_digit_image(img):
     return resized, input_data
 
 
-# 3. Video Processing Class for Real-Time Camera Stream
-class RealTimeDigitRecognizer(VideoTransformerBase):
+# 3. Updated Video Processing Class (VideoProcessorBase)
+class RealTimeDigitRecognizer(VideoProcessorBase):
 
-    def transform(self, frame):
+    def recv(self, frame):
+        # Convert incoming WebRTC frame to BGR array
         img = frame.to_ndarray(format="bgr24")
 
         # Extract preprocessed array and normalized tensor
@@ -95,11 +95,11 @@ class RealTimeDigitRecognizer(VideoTransformerBase):
             cv2.LINE_AA,
         )
 
-        return img
+        # Return updated VideoFrame object back to client stream
+        return frame.from_ndarray(img, format="bgr24")
 
 
 # 4. Streamlit Dashboard Layout
-st.set_page_config(page_title="Real-Time Digit Recognition", layout="wide")
 st.title("🔢 Real-Time Handwritten Digit Recognition")
 st.write(
     "Choose between **Live Real-Time Camera Feed** or **Image File Upload** to recognize handwritten digits."
@@ -121,7 +121,7 @@ if input_mode == "Real-Time Live Camera 📹":
 
     webrtc_streamer(
         key="digit-realtime",
-        video_transformer_factory=RealTimeDigitRecognizer,
+        video_processor_factory=RealTimeDigitRecognizer,
         media_stream_constraints={"video": True, "audio": False},
     )
 
