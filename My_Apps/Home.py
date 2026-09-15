@@ -18,6 +18,8 @@ Choose an application from the sidebar.
 🏠 House Price Prediction
 
 📧 SMS & Email Spam Detection
+
+✍️ Handwritten Digit Recognition
 """)
 
 st.info("Select an application from the left sidebar.")
